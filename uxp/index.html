@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="config.js"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css">   
+</head>
+<body>
+
+    <sp-body size="XXS" class="box2">
+    <sp-label class="margin-top-1" id="rekamMetas">
+      <span id="rekamVersion">Rekam 1.2.0</span><br />
+      eto satrio / @armsaroundmyknees<br />
+      <sp-divider size="medium"></sp-divider> 
+    </sp-label>
+
+
+    <sp-action-button size="s" id="chooseOutputFolder" class="width97">
+      <div slot="icon" style="fill: currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18"><defs></defs><title>S FolderOpenOutline 18 N</title><rect id="Canvas" fill="#ff13dc" opacity="0" width="18" height="18" /><path class="fill" d="M4.345,7H16.6125l-2.333,7H2ZM6.9645,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5H14.6395a.5.5,0,0,0,.4745-.342l2.6665-8A.5.5,0,0,0,17.3065,6H16V4.5a.5.5,0,0,0-.5-.5l-6.166.0035-1.65-1.7A1,1,0,0,0,6.9645,2Z" /></svg>
+    </div>
+      select output folder
+    </sp-action-button>
+    
+    <sp-action-button size="s" id="openOutputFolder" class="width97" disabled>
+      <div slot="icon" style="fill: currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18"><defs> </defs><title>S Folder 18 N</title><rect id="Canvas" fill="#ff13dc" opacity="0" width="18" height="18" /><path class="fill" d="M16.5,4l-7.166.004-1.65-1.7A1,1,0,0,0,6.9645,2H2A1,1,0,0,0,1,3V14.5a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V4.5A.5.5,0,0,0,16.5,4ZM2,3H6.9645L8.908,5H2Z" /></svg>
+     </div>
+      open output folder
+    </sp-action-button>
+  </sp-body>
+
+  <sp-body size="XXS" class="box2">
+    <sp-picker size="s" id="selectVideoRes" placeholder="select video resolution" class="width97">
+      <sp-menu slot="options">
+          <sp-menu-item disabled selected quiet value="720">select video resolution</sp-menu-item>
+          <sp-divider size="medium"></sp-divider> 
+          <sp-menu-item value="1920">1920px</sp-menu-item>
+          <sp-menu-item value="1080">1080px</sp-menu-item>
+          <sp-menu-item value="720">720px</sp-menu-item>
+      </sp-menu>
+  </sp-picker>
+
+  <sp-picker value="f" size="s" id="selectVideoDuration" placeholder="select duration" class="width97">
+    <sp-menu slot="options">
+        <sp-menu-item disabled selected quiet value="default">select duration</sp-menu-item>
+        <sp-menu-item value="default">full length</sp-menu-item>
+        <sp-menu-item value="30">30 seconds</sp-menu-item>
+        <sp-menu-item value="60">60 seconds</sp-menu-item>
+    </sp-menu>
+</sp-picker>
+
+    <sp-button variant="primary" size="s" id="exportToVideo" class="width97" disabled>
+      <div slot="icon" style="fill: currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18"><defs></defs><rect id="Canvas" fill="#ff13dc" opacity="0" width="18" height="18" /><path class="fill" d="M15.5,2H2.5a.5.5,0,0,0-.5.5v13a.5.5,0,0,0,.5.5h13a.5.5,0,0,0,.5-.5V2.5A.5.5,0,0,0,15.5,2ZM5,14.75a.25.25,0,0,1-.25.25H3.25A.25.25,0,0,1,3,14.75v-1.5A.25.25,0,0,1,3.25,13h1.5a.25.25,0,0,1,.25.25Zm0-3.353a.25.25,0,0,1-.25.25H3.25a.25.25,0,0,1-.25-.25v-1.5a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25ZM5,8.103a.25.25,0,0,1-.25.25H3.25A.25.25,0,0,1,3,8.103v-1.5a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25ZM5,4.75A.25.25,0,0,1,4.75,5H3.25A.25.25,0,0,1,3,4.75V3.25A.25.25,0,0,1,3.25,3h1.5A.25.25,0,0,1,5,3.25ZM12,15H6V10h6Zm0-7H6V3h6Zm3,6.75a.25.25,0,0,1-.25.25h-1.5a.25.25,0,0,1-.25-.25v-1.5a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25Zm0-3.353a.25.25,0,0,1-.25.25h-1.5a.25.25,0,0,1-.25-.25v-1.5a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25Zm0-3.294a.25.25,0,0,1-.25.25h-1.5a.25.25,0,0,1-.25-.25v-1.5a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25ZM15,4.75a.25.25,0,0,1-.25.25h-1.5A.25.25,0,0,1,13,4.75V3.25A.25.25,0,0,1,13.25,3h1.5a.25.25,0,0,1,.25.25Z" /></svg>
+     </div>
+      export to video
+    </sp-button>
+  </sp-body>
+ 
+
+  <sp-body size="XXS" class="box">
+    <sp-detail size="S" weight="light" id="infoStatus">select output folder and click start to run a record session...  </sp-detail>
+    <sp-detail size="S" weight="light" id="infoCurrentActiveDoc">(active document: none)</sp-detail>
+    <sp-detail size="S" weight="light" id="infoFolder">(output folder: none)</sp-detail>
+    <sp-detail size="S" weight="light" id="infoStatus2">error: plugins failed to load...</sp-detail>
+    <sp-detail size="S" weight="light" id="reloadPlugins">⟳ reload plugins</sp-detail>
+  </sp-body>
+
+  <footer>
+    <sp-button id="buttonStart" class="margin-right-1" disabled>Start</sp-button>
+	  <sp-button id="buttonStop" variant="warning" disabled>Stop</sp-button>
+  </footer>
+<!-- 
+  <script src="test.js"></script>  -->
+</body>
+</html>

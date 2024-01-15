@@ -1,0 +1,85 @@
+
+
+body {
+    padding: 0 16px;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 20px;
+    overflow: auto; /* or scroll */
+  }
+
+
+  .box {
+    border: 1px solid #808080;
+    border-radius: 4px;
+    padding: 16px;
+    height: 100px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  
+  .box2 {
+    padding: 4px;
+  }
+
+  #chooseOutputFolder,
+  #openOutputFolder,
+  #buttonStart,
+  #buttonStop,
+  #exportToVideo,
+  #reloadPlugins,
+  #selectVideoRes,
+  #selectVideoDuration,
+  #rekamMetas {
+    cursor: pointer;
+  }
+
+  #rekamMetas:hover {
+    text-decoration: underline;
+  }
+
+  #rekamMetas:hover > span {
+    text-decoration: none;
+  }
+
+  #chooseOutputFolder[disabled],
+  #openOutputFolder[disabled],
+  #buttonStart[disabled],
+  #buttonStop[disabled],
+  #exportToVideo[disabled] {
+    cursor:not-allowed;
+  }
+
+  .margin-top-1 {
+    margin-top: 5px;
+  }
+
+  .margin-right-1 {
+    margin-right: 5px;
+  }
+
+  #infoFolder, #infoStatus2, #infoCurrentActiveDoc {
+    font-weight: lighter;
+  }
+
+  #reloadPlugins {
+    text-decoration: underline;
+  }
+
+  .intervalSlider {
+    width: 90%;
+    padding: 0 2%;
+  }
+
+  .cantchoose {
+    padding:5% 10px;
+    cursor: help;
+  }
+
+  .width97 {
+    width: 97%;
+  }
+
+  #exportToVideo {
+    font-weight: 400;
+  }
