@@ -2,7 +2,7 @@
 
 
 
-Rekam ~ Timeleapse like functionality on Photoshop!
+Rekam ~ Timelapse plugins for Photoshop
 written by eto satrio ( @armsaroundmyknees )
 armsaroundmyknees.github.io/rekam
 january 2024

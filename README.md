@@ -1,7 +1,7 @@
 ## Rekam ~ Timelapse plugins for Photoshop
 
-Rekam is bring timelapse functionality in Photoshop like in any other drawing apps with UXP Plugins + FFmpeg, very useful for any artists/illustrators who want to share their working proccess with a video.
-[Download it!](https://gumroad.com/)
+Rekam is bring timelapse functionality to Photoshop like in any other drawing apps with UXP Plugins + FFmpeg, very useful for any artists/illustrators who want to share their working proccess with a video.
+[Download it!](https://armsaroundmyknees.gumroad.com/l/rekam)
 
 ## Goals
 
@@ -17,6 +17,6 @@ Rekam is bring timelapse functionality in Photoshop like in any other drawing ap
 Im creating this plugins for everyone for free,
 ...but im accepting any financial supports. there's many way to do it:
 
-- Pay as you want this plugins on my [gumroad](https://gumroad.com/) page.
+- Pay as you want this plugins on my [gumroad](https://armsaroundmyknees.gumroad.com/l/rekam) page.
 - Commision me to draw for you, [just dm](https://www.instagram.com/armsaroundmyknees/)!
 - or just send me money pls im hungry
