@@ -18,4 +18,5 @@ let rekamConfig = {
   zeroPad: 10, // sequence filenamed suffix, e.g. mycooldrawing_rekam_0000000001.jpg
   ext: ".jpg", //
   interval: 1, //
+  transition: "fadeslow", // ffmpeg xfade transition https://ffmpeg.org/ffmpeg-filters.html#xfade
 };

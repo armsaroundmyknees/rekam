@@ -59,8 +59,6 @@ entrypoints.setup({
 // app variables
 // ________________________________________________________________________
 
-let timestamp = new Date();
-
 let deviceInfo = {
   os: os.platform(),
   arch: os.arch(),
@@ -155,7 +153,7 @@ async function getPluginDir() {
 // fungsi open developer website / homepage
 // ________________________________________________________________________
 function openDevHomepage() {
-  uxpshell.openExternal("https://armsaroundmyknees.github.io/rekam");
+  uxpshell.openExternal("https://armsaroundmyknees.gumroad.com/l/rekam");
 }
 
 // fungsi check active document
@@ -648,6 +646,7 @@ async function actWriteExportList() {
 // fungsi create ffmpeg command
 // ________________________________________________________________________
 async function actCreateFfmpegCmd() {
+  let timestamp = new Date();
   let currentActiveOutDirName = `${rekamConfig.suffix}_${thisDocument.name}`;
 
   let currentActiveOutDirEntry = await chosenFolderEntry
@@ -667,6 +666,7 @@ async function actCreateFfmpegCmd() {
   let pluginDir = rekamConfig.pluginDir.nativePath;
   let ffmpegTempDir = `${pluginDir}/ffmpeg/temp`;
   let ffmpegCommandLogs = "-v 24 -stats -y";
+  let ffmpegEncoderSettings = "-c:v libx264rgb -pix_fmt rgb24 -crf 18 -qp 23";
 
   let tempAfilename = `temp_a_${timeStart}_timeleapse.mp4`;
   let tempBfilename = `temp_b_${timeStart}_timeleapse.mp4`;
@@ -678,9 +678,9 @@ async function actCreateFfmpegCmd() {
   let imageListsFile = `${rekamConfig.pluginScriptsDataDir.nativePath}/exportList.txt`;
 
   // video settings
-  let videoFPS = 40;
-  let holdStartPreviewDuration = 1.5;
-  let holdEndPreviewDuration = 1;
+  let videoFPS = 30;
+  let holdStartPreviewDuration = 2;
+  let holdEndPreviewDuration = 2;
   let videoFramesAmount =
     toBeExportedFramesAmount +
     holdEndPreviewDuration * videoFPS +
@@ -693,7 +693,7 @@ async function actCreateFfmpegCmd() {
     rekamButtons.videoDuration.selectedOptions[0].value;
   let videoDuration = ``;
   let selectedVideoWidth =
-    rekamButtons.videoResolution.selectedOptions[0].value;
+    rekamButtons.videoResolution.selectedOptions[0].value - 1;
 
   // video default ratio
   let videoRatio = thisDocument.h / thisDocument.w;
@@ -711,14 +711,14 @@ async function actCreateFfmpegCmd() {
       break;
     case "30":
       videoDuration = `setpts=${
-        Math.round((29.6 / estimatedFinalDuration) * 100) / 100
+        Math.round((29 / estimatedFinalDuration) * 100) / 100
       }*PTS`;
 
       stretcheDuration = `final duration adjusted to 30 seconds.`;
       break;
     case "60":
       videoDuration = `setpts=${
-        Math.round((59.6 / estimatedFinalDuration) * 100) / 100
+        Math.round((59 / estimatedFinalDuration) * 100) / 100
       }*PTS`;
 
       stretcheDuration = `final duration adjusted to 60 seconds.`;
@@ -742,17 +742,21 @@ async function actCreateFfmpegCmd() {
       ffmpegCmd = `
       @ECHO OFF
       TITLE (1/4) Exporting preview...
-      ${ffmpegBin} ${ffmpegCommandLogs} -loop 1 -r ${videoFPS} -i "${lastFrameFromExportLists}" -t "${holdStartPreviewDuration}"  -c:v libx264 -crf 18 -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, format=yuv420p, pad=${selectedVideoWidth}:${calculatedVideoHeight}:-1:-1:color=white" -pix_fmt yuv420p "${tempA}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -loop 1 -r ${videoFPS} -i "${lastFrameFromExportLists}" -t "${holdStartPreviewDuration}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white" "${tempA}"
       ECHO rendering preview done. (1/4)
       ECHO _______________________________________________________________________
       ECHO:
       TITLE (2/4) Exporting main timeleapse.
-      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" -c:v libx264 -crf 18 -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, format=yuv420p, pad=${selectedVideoWidth}:${calculatedVideoHeight}:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone, ${videoDuration}" -pix_fmt yuv420p "${tempB}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone, ${videoDuration}" "${tempB}"
       ECHO rendering main timeleapse done. (2/4)
       ECHO _______________________________________________________________________
       ECHO:
       TITLE (3/4) Merging preview+main.
-      ${ffmpegBin} ${ffmpegCommandLogs} -i "${tempA}" -i "${tempB}" -filter_complex "[0:v]fps=${videoFPS}[v0];[1:v]fps=${videoFPS}[v1];[v0][v1]xfade=transition=fade:duration=0.5:offset=1, format=yuv420p, fps=${videoFPS}" -c:v libx264 -crf 18 -pix_fmt yuv420p "${finalMp4}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -i "${tempA}" -i "${tempB}" -filter_complex "[0:v]fps=${videoFPS}[v0];[1:v]fps=${videoFPS}[v1];[v0][v1]xfade=transition=${
+        rekamConfig.transition
+      }:duration=${holdStartPreviewDuration * 0.2}:offset=${
+        holdStartPreviewDuration * 0.8
+      }, fps=${videoFPS}" ${ffmpegEncoderSettings} "${finalMp4}"
       ECHO rendering merged preview+main done. (3/4)
       ECHO _______________________________________________________________________
       ECHO:
@@ -793,19 +797,20 @@ async function actCreateFfmpegCmd() {
         .then((suc) => suc);
 
       // write ffmpeg bash scripts for mac
+      /*
       ffmpegCmd = `
       ## (1/4) Exporting preview...
-      ${ffmpegBin} ${ffmpegCommandLogs} -loop 1 -r ${videoFPS} -i "${lastFrameFromExportLists}" -t "${holdStartPreviewDuration}"  -c:v libx264 -crf 18 -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, format=yuv420p, pad=${selectedVideoWidth}:${calculatedVideoHeight}:-1:-1:color=white" -pix_fmt yuv420p "${tempA}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -loop 1 -r ${videoFPS} -i "${lastFrameFromExportLists}" -t "${holdStartPreviewDuration}"  -c:v libx264 -crf 18 -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, format=yuv420p, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white" -pix_fmt yuv420p "${tempA}"
       ECHO "rendering preview done. (1/4)"
       ECHO "_______________________________________________________________________"
       ECHO "\n"
       ##TITLE (2/4) Exporting main timeleapse.
-      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" -c:v libx264 -crf 18 -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, format=yuv420p, pad=${selectedVideoWidth}:${calculatedVideoHeight}:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone, ${videoDuration}" -pix_fmt yuv420p "${tempB}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" -c:v libx264 -crf 18 -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, format=yuv420p, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone, ${videoDuration}" -pix_fmt yuv420p "${tempB}"
       ECHO "rendering main timeleapse done. (2/4)"
       ECHO "_______________________________________________________________________"
       ECHO "\n" 
       ##TITLE (3/4) Merging preview+main.
-      ${ffmpegBin} ${ffmpegCommandLogs} -i "${tempA}" -i "${tempB}" -filter_complex "[0:v]fps=${videoFPS}[v0];[1:v]fps=${videoFPS}[v1];[v0][v1]xfade=transition=fade:duration=0.5:offset=1, format=yuv420p, fps=${videoFPS}" -c:v libx264 -crf 18 -pix_fmt yuv420p "${finalMp4}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -i "${tempA}" -i "${tempB}" -filter_complex "[0:v]fps=${videoFPS}[v0];[1:v]fps=${videoFPS}[v1];[v0][v1]xfade=transition=fade:duration=1:offset=1, format=yuv420p, fps=${videoFPS}" -c:v libx264 -crf 18 -pix_fmt yuv420p "${finalMp4}"
       ECHO "rendering merged preview+main done. (3/4)"
       ECHO "_______________________________________________________________________"
       ECHO "\n" 
@@ -826,7 +831,7 @@ async function actCreateFfmpegCmd() {
       open .`;
 
       // execute command for mac
-      /*
+      
       ffmpegCommandFile.write(ffmpegCmd, {
         encoding: "utf-8",
       });
@@ -847,7 +852,7 @@ async function actCreateFfmpegCmd() {
 
 // uxp dom layout setup
 // ________________________________________________________________________
-function actOpenPluginData() {
+function actOpenPluginDataDir() {
   uxpshell.openPath(rekamConfig.pluginDataDir.nativePath);
 }
 
