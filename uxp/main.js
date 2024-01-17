@@ -666,7 +666,7 @@ async function actCreateFfmpegCmd() {
   let pluginDir = rekamConfig.pluginDir.nativePath;
   let ffmpegTempDir = `${pluginDir}/ffmpeg/temp`;
   let ffmpegCommandLogs = "-v 24 -stats -y";
-  let ffmpegEncoderSettings = "-c:v libx264rgb -pix_fmt rgb24 -crf 18 -qp 23";
+  let ffmpegEncoderSettings = "-c:v libx264 -pix_fmt yuv420p -crf 18 -qp 23";
 
   let tempAfilename = `temp_a_${timeStart}_timeleapse.mp4`;
   let tempBfilename = `temp_b_${timeStart}_timeleapse.mp4`;
@@ -742,17 +742,17 @@ async function actCreateFfmpegCmd() {
       ffmpegCmd = `
       @ECHO OFF
       TITLE (1/4) Exporting preview...
-      ${ffmpegBin} ${ffmpegCommandLogs} -loop 1 -r ${videoFPS} -i "${lastFrameFromExportLists}" -t "${holdStartPreviewDuration}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white" "${tempA}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -loop 1 -r ${videoFPS} -i "${lastFrameFromExportLists}" -t "${holdStartPreviewDuration}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease:out_color_matrix=bt709:flags=lanczos, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white" "${tempA}"
       ECHO rendering preview done. (1/4)
       ECHO _______________________________________________________________________
       ECHO:
       TITLE (2/4) Exporting main timeleapse.
-      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone, ${videoDuration}" "${tempB}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease:out_color_matrix=bt709:flags=lanczos, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone" "${tempB}"
       ECHO rendering main timeleapse done. (2/4)
       ECHO _______________________________________________________________________
       ECHO:
       TITLE (3/4) Merging preview+main.
-      ${ffmpegBin} ${ffmpegCommandLogs} -i "${tempA}" -i "${tempB}" -filter_complex "[0:v]fps=${videoFPS}[v0];[1:v]fps=${videoFPS}[v1];[v0][v1]xfade=transition=${
+      ${ffmpegBin} ${ffmpegCommandLogs} -i "${tempA}" -i "${tempB}" -filter_complex "[0:v]fps=${videoFPS}, scale=out_color_matrix=bt709:flags=lanczos[v0];[1:v]fps=${videoFPS}, scale=out_color_matrix=bt709:flags=lanczos[v1];[v0][v1]xfade=transition=${
         rekamConfig.transition
       }:duration=${holdStartPreviewDuration * 0.2}:offset=${
         holdStartPreviewDuration * 0.8
