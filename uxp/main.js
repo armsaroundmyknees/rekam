@@ -747,7 +747,7 @@ async function actCreateFfmpegCmd() {
       ECHO _______________________________________________________________________
       ECHO:
       TITLE (2/4) Exporting main timeleapse.
-      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease:out_color_matrix=bt709:flags=lanczos, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone" "${tempB}"
+      ${ffmpegBin} ${ffmpegCommandLogs} -f concat -safe 0 -r ${videoFPS} -i "${imageListsFile}" ${ffmpegEncoderSettings} -vf "scale=${selectedVideoWidth}:${calculatedVideoHeight}:force_original_aspect_ratio=decrease:out_color_matrix=bt709:flags=lanczos, pad=${selectedVideoWidth}+1:${calculatedVideoHeight}+1:-1:-1:color=white, tpad=stop_duration=${holdEndPreviewDuration}:stop_mode=clone:start_duration=${holdStartPreviewDuration}:start_mode=clone, ${videoDuration}" "${tempB}"
       ECHO rendering main timeleapse done. (2/4)
       ECHO _______________________________________________________________________
       ECHO:
